@@ -1,22 +1,22 @@
 # Sman
-[![Build Status](https://travis-ci.org/tokozedg/sman.svg?branch=master)](https://travis-ci.org/tokozedg/sman)
+[![Build Status](https://travis-ci.org/dhhyi/sman.svg?branch=master)](https://travis-ci.org/dhhyi/sman)
 
 ***
 A command-line snippet manager in Go
 
+Forked from [https://github.com/tokozedg/sman](https://github.com/tokozedg/sman) 
+
 [![asciicast](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop.png)](https://asciinema.org/a/2e04fxybyyo5ubjk42mk4yuop)
-
-## Install
-
-```shell
-bash -c "$(curl https://raw.githubusercontent.com/tokozedg/sman/master/install.sh)"
-```
 
 ## Building
 
 * Build with Go
 ```bash
-go get -v github.com/tokozedg/sman
+go get -d github.com/tokozedg/sman
+git -C "$GOPATH/src/github.com/tokozedg/sman" remote add dhhyi https://github.com/dhhyi/sman.git
+git -C "$GOPATH/src/github.com/tokozedg/sman" branch --set-upstream-to dhhyi/master
+git -C "$GOPATH/src/github.com/tokozedg/sman" reset --hard
+go build -v github.com/tokozedg/sman
 ```
 
 * Add to your rc:
