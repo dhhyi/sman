@@ -94,9 +94,13 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 }
 
 // filterByTag filters snippet slice by tag
-func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
+func filterByTag(snippets SnippetSlice, tags string) (matched SnippetSlice) {
 	for _, s := range snippets {
-		if sliceContains(s.Tags, tag) {
+		snippetMatches := true
+		for _, tag := range strings.Split(tags, ",") {
+			snippetMatches = sliceContains(s.Tags, tag) && snippetMatches
+		}
+		if (snippetMatches) {
 			matched = append(matched, s)
 		}
 	}

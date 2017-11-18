@@ -110,6 +110,8 @@ s ls [-f <FILE>] [-t <TAG>] [<PATTERN>]
 
 * Pattern is matched against snippet name, command and description
 
+* Search for multiple tags with a comma-separated list
+
 ### List and search snippets for scripts
 
 * Use the `--porcelain` flag to produce machine-readable output for scripting.

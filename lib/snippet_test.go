@@ -148,7 +148,7 @@ func TestFilterByTag(t *testing.T) {
 		tag         string
 		wantMatched SnippetSlice
 	}{
-		{"1",
+		{"single tag filter",
 			SnippetSlice{
 				Snippet{
 					Name: "skipped",
@@ -163,6 +163,29 @@ func TestFilterByTag(t *testing.T) {
 				Snippet{
 					Name: "matched",
 					Tags: []string{"tag"},
+				},
+			},
+		},
+		{"multiple tag filter",
+			SnippetSlice{
+				Snippet{
+					Name: "skipped",
+					Tags: []string{"tag1"},
+				},
+				Snippet{
+					Name: "matched",
+					Tags: []string{"tag1", "tag2"},
+				},
+				Snippet{
+					Name: "skipped",
+					Tags: []string{"tag2"},
+				},
+			},
+			"tag1,tag2",
+			SnippetSlice{
+				Snippet{
+					Name: "matched",
+					Tags: []string{"tag1", "tag2"},
 				},
 			},
 		},
