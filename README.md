@@ -110,7 +110,9 @@ s ls [-f <FILE>] [-t <TAG>] [<PATTERN>]
 
 * Pattern is matched against snippet name, command and description
 
-* Search for multiple tags with a comma-separated list
+* Search for multiple tags with a `,`(OR)- and `+`(AND)-separated list.
+`+` binds stronger than `,`. The query for `tag1+tag2,tag3` will return
+snippets with `tag1` and `tag2` and also return snippets with `tag3`.
 
 ### List and search snippets for scripts
 

@@ -93,15 +93,20 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 	return snippets
 }
 
-// filterByTag filters snippet slice by tag
+// filterByTag filters snippet slice by tags
+// OR queries can be done with ';', AND queries can be done with ','
+// AND binds stronger than OR
 func filterByTag(snippets SnippetSlice, tags string) (matched SnippetSlice) {
 	for _, s := range snippets {
-		snippetMatches := true
-		for _, tag := range strings.Split(tags, ",") {
-			snippetMatches = sliceContains(s.Tags, tag) && snippetMatches
-		}
-		if (snippetMatches) {
-			matched = append(matched, s)
+		for _, andTags := range strings.Split(tags, ",") {
+			snippetMatches := true
+			for _, tag := range strings.Split(andTags, "+") {
+				snippetMatches = sliceContains(s.Tags, tag) && snippetMatches
+			}
+			if snippetMatches {
+				matched = append(matched, s)
+				break
+			}
 		}
 	}
 	return matched
