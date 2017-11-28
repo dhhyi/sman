@@ -142,33 +142,68 @@ func TestInitSnippets(t *testing.T) {
 }
 
 func TestFilterByTag(t *testing.T) {
+	var snippet = Snippet{Name:"s"}
+	var snippet1 = Snippet{Name:"s1", Tags:[]string{"tag1"}}
+	var snippet12 = Snippet{Name:"s12", Tags:[]string{"tag1", "tag2"}}
+	var snippet2 = Snippet{Name:"s2", Tags:[]string{"tag2"}}
+	var snippet3 = Snippet{Name:"s3", Tags:[]string{"tag3"}}
+	var all = SnippetSlice{snippet, snippet1, snippet12, snippet2, snippet3}
+
 	tests := []struct {
 		name        string
 		snippets    SnippetSlice
 		tag         string
 		wantMatched SnippetSlice
 	}{
-		{"1",
-			SnippetSlice{
-				Snippet{
-					Name: "skipped",
-				},
-				Snippet{
-					Name: "matched",
-					Tags: []string{"tag"},
-				},
-			},
-			"tag",
-			SnippetSlice{
-				Snippet{
-					Name: "matched",
-					Tags: []string{"tag"},
-				},
-			},
+		{"no tag filter",
+			all,
+			"",
+			SnippetSlice{},
+		},
+		{"single tag filter tag1",
+			all,
+			"tag1",
+			SnippetSlice{snippet1, snippet12},
+		},
+		{"single tag filter tag3",
+			all,
+			"tag3",
+			SnippetSlice{snippet3},
+		},
+		{"multiple tag filter tag1 and tag2",
+			all,
+			"tag1+tag2",
+			SnippetSlice{snippet12},
+		},
+		{"multiple tag filter tag1 and tag3",
+			all,
+			"tag1+tag3",
+			SnippetSlice{},
+		},
+		{"multiple tag filter tag1 or tag2",
+			all,
+			"tag1,tag2",
+			SnippetSlice{snippet1, snippet12, snippet2},
+		},
+		{"multiple tag filter tag1 or tag3",
+			all,
+			"tag1,tag3",
+			SnippetSlice{snippet1, snippet12, snippet3},
+		},
+		{"multiple tag filter tag1 and tag2 or tag3",
+			all,
+			"tag1+tag2,tag3",
+			SnippetSlice{snippet12, snippet3},
+		},
+		{"multiple tag filter tag1 and tag2 or tag1 and tag3",
+			all,
+			"tag1+tag2,tag1+tag3",
+			SnippetSlice{snippet12},
 		},
 	}
 	for _, tt := range tests {
-		if gotMatched := filterByTag(tt.snippets, tt.tag); !reflect.DeepEqual(gotMatched, tt.wantMatched) {
+		if gotMatched := filterByTag(tt.snippets, tt.tag);
+			!((gotMatched.Len() == 0 && tt.wantMatched.Len() == 0) || reflect.DeepEqual(gotMatched, tt.wantMatched)) {
 			t.Errorf("%q. filterByTag() = %v, want %v", tt.name, gotMatched, tt.wantMatched)
 		}
 	}

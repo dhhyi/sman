@@ -93,11 +93,20 @@ func initSnippets(snippetMap map[string]Snippet, file string, dir string) (snipp
 	return snippets
 }
 
-// filterByTag filters snippet slice by tag
-func filterByTag(snippets SnippetSlice, tag string) (matched SnippetSlice) {
+// filterByTag filters snippet slice by tags
+// OR queries can be done with ';', AND queries can be done with ','
+// AND binds stronger than OR
+func filterByTag(snippets SnippetSlice, tags string) (matched SnippetSlice) {
 	for _, s := range snippets {
-		if sliceContains(s.Tags, tag) {
-			matched = append(matched, s)
+		for _, andTags := range strings.Split(tags, ",") {
+			snippetMatches := true
+			for _, tag := range strings.Split(andTags, "+") {
+				snippetMatches = sliceContains(s.Tags, tag) && snippetMatches
+			}
+			if snippetMatches {
+				matched = append(matched, s)
+				break
+			}
 		}
 	}
 	return matched
@@ -156,4 +165,14 @@ func (s SnippetSlice) Less(a, b int) bool {
 
 func (s SnippetSlice) Swap(a, b int) {
 	s[a], s[b] = s[b], s[a]
+}
+
+// filter input by test function and return new slice with matched snippets
+func (ss SnippetSlice) FilterView(test func(Snippet) bool) (ret SnippetSlice) {
+	for _, s := range ss {
+		if test(s) {
+			ret = append(ret, s)
+		}
+	}
+	return
 }
