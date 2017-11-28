@@ -77,17 +77,20 @@ func run(name string, inputs ...string) {
 	switch len(matchedSnippets) {
 	case 0:
 		printlnError("No snippets matched...")
+		fmt.Println("false")
 		os.Exit(1)
 	case 1:
 		snippet = matchedSnippets[0]
 	default:
 		printlnError("Multiple snippets matched...")
 		doLsSlice(matchedSnippets, os.Stderr)
+		fmt.Println("false")
 		os.Exit(1)
 	}
 
 	if len(inputs) > len(snippet.Placeholders) {
 		printlnError("You gave ", len(inputs), " argument(s), limit is ", len(snippet.Placeholders))
+		fmt.Println("false")
 		os.Exit(1)
 	}
 
