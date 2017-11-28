@@ -158,3 +158,59 @@ func TestNameCombinations(t *testing.T) {
 		}
 	}
 }
+
+func TestRankMatch(t *testing.T) {
+	tests := []struct {
+		name             string
+		source           string
+		target           string
+		minsimilarity    float64
+		wantRank         int
+	}{
+		{"empty source but all allowed",
+			"", "test", 0,
+			4,
+		},
+		{"empty source but only 100% allowed",
+			"", "test", 1,
+			-1,
+		},
+		{"partial match 0% min",
+			"tes", "test", 0,
+			1,
+		},
+		{"partial match 50% min",
+			"tes", "test", 0.5,
+			1,
+		},
+		{"partial match 75% min",
+			"tes", "test", 0.75,
+			1,
+		},
+		{"partial match 100% min",
+			"tes", "test", 1,
+			-1,
+		},
+		{"full match",
+			"test", "test", 0,
+			0,
+		},
+		{"partial match",
+			"comp", "compile", 0.5,
+			3,
+		},
+		{"scrambled match",
+			"cmpl", "compile", 0.5,
+			3,
+		},
+		{"not specific enough",
+			"c", "compile", 0.5,
+			-1,
+		},
+	}
+	for _, tt := range tests {
+		if gotRank := fRankMatch(tt.source, tt.target, tt.minsimilarity); gotRank != tt.wantRank {
+			t.Errorf("%q. fRankMatch() = %v, want %v", tt.name, gotRank, tt.wantRank)
+		}
+	}
+}
