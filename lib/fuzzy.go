@@ -34,6 +34,8 @@ func fSearchFileName(pattern string, dir string) (matched []string) {
 // fSearchSnippet matches pattern to snippet name in SnippetSlice
 // returns SnippetSlice of best matched snippets.
 func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice) {
+	c := getConfig()
+
 	// special case handling if pattern == snippet name
 	wholeNameMatchTest := func(s Snippet) bool { return s.Name == pattern }
 	wholeNameMatch := snippets.FilterView(wholeNameMatchTest)
@@ -44,7 +46,7 @@ func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice
 	topRank := -1
 	for _, s := range snippets {
 		for _, part := range nameCombinations(s.Name) {
-			r := fuzzy.RankMatch(pattern, part)
+			r := fRankMatch(pattern, part, c.MinMatchPercentage)
 			switch {
 			case r == -1:
 				continue
@@ -57,6 +59,15 @@ func fSearchSnippet(snippets SnippetSlice, pattern string) (matched SnippetSlice
 		}
 	}
 	return matched
+}
+
+func fRankMatch(source, target string, minSimilarity float64) (match int) {
+	match = fuzzy.RankMatch(source, target)
+	matchSimilarity := float64(len(target) - match) / float64(len(target))
+	if matchSimilarity < minSimilarity {
+		return -1
+	}
+	return
 }
 
 // construct name combinations using ':' as separator of name parts
